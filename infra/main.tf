@@ -1,7 +1,7 @@
 # この段階で作るのは EC2 1 台である。
-# 画面と API は FastAPI が同じプロセスで返す。あとにこのサーバへ置く。
+# この版の Hono と SQLite は、この EC2 では動かない。SQLite は Durable Object のストレージである。
 # データベースの製品は SQLite である。RDS は作らない。
-# 外から入れるポートは、この PC からの 22（SSH）、80（nginx）、8000（API の直接確認）だけである。
+# 外から入れるポートは、この PC からの 22（SSH）と 80 だけである。
 # terraform apply は、起動してよいと言われるまで実行しない。
 
 data "aws_vpc" "default" {
@@ -42,7 +42,7 @@ data "aws_ami" "amazon_linux_2023" {
 
 resource "aws_security_group" "reading_log" {
   name        = "reading-log-ec2"
-  description = "Reading log EC2. Inbound is this PC only, on 22, 80, and 8000."
+  description = "Reading log EC2. Inbound is this PC only, on 22 and 80."
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
@@ -61,16 +61,8 @@ resource "aws_security_group" "reading_log" {
     cidr_blocks = [var.allowed_cidr]
   }
 
-  ingress {
-    description = "API direct check from this PC"
-    from_port   = 8000
-    to_port     = 8000
-    protocol    = "tcp"
-    cidr_blocks = [var.allowed_cidr]
-  }
-
   # これはサーバから外へ出る向きである。パッケージの取得と SSM のために残す。
-  # 外から入る接続は、上の 22、80、8000 だけである。
+  # 外から入る接続は、上の 22 と 80 だけである。
   egress {
     description = "Outbound for packages and SSM"
     from_port   = 0

@@ -1,6 +1,8 @@
 .venv/
 __pycache__/
 reading.db
+node_modules/
+.wrangler/
 
 .terraform/
 *.tfstate

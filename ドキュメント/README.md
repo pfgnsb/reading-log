@@ -7,18 +7,18 @@
 | 版 | 1.0 |
 | 作成日 | 2026年10月26日 |
 | 作成者 | nsb |
-| 関連資料 | 用語定義書、要件定義書、機能要件定義書、機能要件、非機能要件、ユースケース、ER図、データベース設計、技術スタック、API仕様書、画面見取り図、画面設計書、操作手順書、AWSデプロイガイド、`templates/index.html` |
+| 関連資料 | 用語定義書、要件定義書、機能要件定義書、機能要件、非機能要件、ユースケース、ER図、データベース設計、技術スタック、API仕様書、画面見取り図、画面設計書、操作手順書、AWSデプロイガイド、`frontend/index.html` |
 | 目的 | 資料を、どの順で読むかと、役割で引けるようにする |
 
 この資料は、資料の入口です。何を作るか、何を作らないかの正は「要件定義書」です。言葉の意味の正は「用語定義書」です。
 
-利用者は、登録した人です。画面は `templates/index.html` の1枚です。バックエンドの言語は Python、フレームワークは FastAPI です。ファイルは `app.py` で、実行環境は Uvicorn です。データベースの言語は SQL、製品は SQLite です。ファイルは `reading.db` で、読み書きは `db.py` です。EC2 の定義はあります。インスタンスは起動していません。PostgreSQL と RDS は置きません。
+利用者は、登録した人です。画面は `frontend/index.html` の1枚です。バックエンドの言語は JavaScript、フレームワークは Hono です。ファイルは `backend/worker.js` で、実行環境は Cloudflare Workers です。経路は `durable-object/reading.js` です。データベースの言語は SQL、製品は SQLite です。SQLite は Durable Object のストレージです。EC2 の定義はあります。インスタンスは起動していません。この版の Hono と SQLite は、その EC2 では動きません。PostgreSQL と RDS は置きません。
 
 | 層 | 言語 | フレームワークまたは製品 | 場所 | いまあるもの |
 |---|---|---|---|---|
-| フロントエンド | HTML、CSS、JavaScript | なし | `templates/index.html`、`static/style.css` | ログイン欄、本の追加、自分の本の一覧 |
-| バックエンド | Python | FastAPI | `app.py` | `/api/` を SQLite へ渡す。実行環境は Uvicorn。`127.0.0.1:8000` |
-| データベース | SQL | SQLite | `db.py`、`reading.db` | `users`、`sessions`、アカウントごとの `books` |
+| フロントエンド | HTML、CSS、JavaScript | なし | `frontend/index.html` | ログイン欄、本の追加、自分の本の一覧。CSS は `<style>`、JavaScript は `<script>` |
+| バックエンド | JavaScript | Hono | `backend/worker.js` | `/api/` を Durable Object へ渡す。実行環境は Cloudflare Workers。`127.0.0.1:8787` |
+| データベース | SQL | SQLite | `durable-object/reading.js` | `users`、`sessions`、アカウントごとの `books`。実行環境は Durable Object のストレージ |
 | 資料 | | | `ドキュメント` | 言葉、範囲、機能、画面、データ、技術、API、手順 |
 
 ## 1. どの順で読むか
@@ -58,11 +58,11 @@
 
 ### 技術
 
-使うものと使わないものは技術スタックです。フロントエンドの言語は HTML、CSS、JavaScript で、フレームワークはありません。バックエンドの言語は Python、フレームワークは FastAPI、実行環境は Uvicorn です。データベースは SQLite です。パスは API仕様書です。手元では `http://127.0.0.1:8000` を開きます。EC2 はまだ起動していません。手順は AWSデプロイガイドです。
+使うものと使わないものは技術スタックです。フロントエンドの言語は HTML、CSS、JavaScript で、フレームワークはありません。バックエンドの言語は JavaScript、フレームワークは Hono、実行環境は Cloudflare Workers です。データベースは SQLite で、Durable Object のストレージです。パスは API仕様書です。手元では `http://127.0.0.1:8787` を開きます。EC2 はまだ起動していません。手順は AWSデプロイガイドです。
 
 ### 画面
 
-先に形をつかむときは画面見取り図です。部品の表は画面設計書です。開き方と、押したときの手順は操作手順書です。サーバを起動せずに動かす画面は `prototype/index.html` です。記録は localStorage で、本実装の SQLite ではありません。
+先に形をつかむときは画面見取り図です。部品の表は画面設計書です。開き方と、押したときの手順は操作手順書です。サーバを起動せずに動かす画面は `prototype/index.html` です。記録は localStorage で、本実装の Durable Object の SQLite ではありません。
 
 ## 3. 資料の関係
 

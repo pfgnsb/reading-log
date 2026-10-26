@@ -145,6 +145,11 @@ def logout(request: Request):
     return response
 
 
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.get("/api/me")
 def me(request: Request):
     user = current_user(request)

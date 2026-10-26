@@ -1,0 +1,20 @@
+name: branch-name
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        shell: bash
+        run: |
+          if [[ ! "$HEAD_REF" =~ ^(feature|fix|docs|chore)/[0-9]+-[a-z0-9-]+$ ]]; then
+            echo "Branch name must match feature|fix|docs|chore/<issue>-<name>"
+            echo "Got: $HEAD_REF"
+            exit 1
+          fi

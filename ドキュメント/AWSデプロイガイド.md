@@ -4,15 +4,15 @@
 |---|---|
 | 文書名 | AWSデプロイガイド |
 | 対象システム | 読書記録 |
-| 版 | 1.1 |
+| 版 | 1.2 |
 | 作成日 | 2026年10月26日 |
 | 作成者 | nsb |
 | 関連資料 | ドキュメント一覧、要件定義書、用語定義書、技術スタック、データベース設計、API仕様書、操作手順書 |
-| 目的 | EC2 の定義を残す。この版の Hono と SQLite は、その EC2 には置かない。起動もしない |
+| 目的 | EC2 の起動結果を残す。この版の Hono と SQLite は、その EC2 には置かない |
 
 言葉の意味は「用語定義書」に従います。採用する技術の正は「技術スタック」です。手元の `127.0.0.1:8787` で開く手順は「操作手順書」です。
 
-インスタンスは、まだ作っていません。`terraform apply` は、起動してよいと言われるまで実行しません。データベースの製品は SQLite のままです。RDS は作りません。SQLite の実行環境は Durable Object のストレージです。
+2026年10月26日に `terraform apply` を実行し、EC2 を1台起動しました。データベースの製品は SQLite のままです。RDS は作りません。SQLite の実行環境は Durable Object のストレージです。公開アドレスは Git に書きません。`infra` で `terraform output public_ip` を実行して見ます。
 
 ## 1. 何を置くか
 
@@ -23,7 +23,7 @@
 | フロントエンド | HTML、CSS、JavaScript | なし | ブラウザ。`frontend/index.html` |
 | バックエンド | JavaScript | Hono | Cloudflare Workers。手元は `127.0.0.1:8787` |
 | データベース | SQL | SQLite | Durable Object のストレージ。`durable-object/reading.js` |
-| 土台 | | Terraform | リージョンは `ap-northeast-1`。既定の VPC。定義は `infra/`。インスタンスは未起動 |
+| 土台 | | Terraform | リージョンは `ap-northeast-1`。既定の VPC。定義は `infra/`。2026年10月26日に起動した |
 
 ```text
 この PC のブラウザ
@@ -46,7 +46,7 @@ Terraform のセキュリティグループが正です。値の置き場所は 
 
 外へ出る向きは、パッケージの取得と SSM のために開いてあります。外から入る穴は、上の2つだけです。8000 番は、以前の Uvicorn 用だったので、この定義からは外しました。
 
-回線のアドレスが変わったら、`allowed_cidr` を直してから `terraform apply` します。直すまで、ブラウザも SSH も届きません。いまは apply しません。
+回線のアドレスが変わったら、`allowed_cidr` を直してから `terraform apply` します。直すまで、SSH も 80 番も届きません。
 
 ## 3. 事前に要るもの
 
@@ -72,7 +72,7 @@ allowed_cidr = "このPCの公開アドレス/32"
 
 ## 4. 起動するとき
 
-起動してよいと言われるまで、ここから先は実行しません。
+2026年10月26日に、ここを実行して EC2 を起動しました。作り直すときは、同じコマンドを使います。
 
 `infra` で次を実行します。
 
@@ -98,4 +98,4 @@ terraform output public_ip
 
 ## 6. いまの状態
 
-2026年10月26日の時点で、`infra/` に定義だけがあります。`terraform apply` は実行していません。EC2 は無く、公開アドレスもありません。減り続けるクレジットもありません。Hono と Durable Object の SQLite は、手元の Wrangler の中で動きます。
+2026年10月26日に、東京リージョンの既定 VPC へ EC2 を1台起動しました。型は t4g.small、名前は `reading-log` です。入ってくる接続は、この PC の 22 番と 80 番だけです。状態ファイルは `infra/terraform.tfstate` で、Git には入っていません。Hono と Durable Object の SQLite は、手元の Wrangler の中で動きます。

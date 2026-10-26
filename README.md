@@ -10,7 +10,7 @@
 | バックエンド | JavaScript | Hono | Cloudflare Workers。`127.0.0.1:8787` |
 | データベース | SQL | SQLite | Durable Object のストレージ |
 
-Cloudflare Workers と Durable Objects は実行環境です。言語でもフレームワークでもデータベース製品でもありません。EC2 の定義は置いてあり、インスタンスは起動していません。この版の Hono と SQLite は、その EC2 では動きません。
+Cloudflare Workers と Durable Objects は実行環境です。言語でもフレームワークでもデータベース製品でもありません。EC2 は 2026年10月26日に起動しています。この版の Hono と SQLite は、その EC2 では動きません。公開アドレスは `infra` で `terraform output public_ip` を実行して見ます。
 
 ## 開き方
 
@@ -46,4 +46,4 @@ npx wrangler dev
 | [画面見取り図](ドキュメント/画面見取り図.md) | どこに何を置くか |
 | [画面設計書](ドキュメント/画面設計書.md) | 部品と、押したときの動き |
 | [操作手順書](ドキュメント/操作手順書.md) | 起動と画面の手順 |
-| [AWSデプロイガイド](ドキュメント/AWSデプロイガイド.md) | EC2 の定義。起動はしていない |
+| [AWSデプロイガイド](ドキュメント/AWSデプロイガイド.md) | EC2 の起動。2026年10月26日に1台起動した |

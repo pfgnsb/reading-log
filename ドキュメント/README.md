@@ -12,7 +12,7 @@
 
 この資料は、資料の入口です。何を作るか、何を作らないかの正は「要件定義書」です。言葉の意味の正は「用語定義書」です。
 
-利用者は、登録した人です。画面は `frontend/index.html` の1枚です。バックエンドの言語は JavaScript、フレームワークは Hono です。ファイルは `backend/worker.js` で、実行環境は Cloudflare Workers です。経路は `durable-object/reading.js` です。データベースの言語は SQL、製品は SQLite です。SQLite は Durable Object のストレージです。EC2 は 2026年10月26日に起動しています。この版の Hono と SQLite は、その EC2 では動きません。PostgreSQL と RDS は置きません。
+利用者は、登録した人です。画面は `frontend/index.html` の1枚です。バックエンドの言語は JavaScript、フレームワークは Hono です。ファイルは `backend/worker.js` で、実行環境は Cloudflare Workers です。経路は `durable-object/reading.js` です。データベースの言語は SQL、製品は SQLite です。SQLite は Durable Object のストレージです。EC2 は 2026年10月26日に起動し、同じ日にアプリを載せています。入口は nginx の 80 番で、この PC だけが開けます。PostgreSQL と RDS は置きません。
 
 | 層 | 言語 | フレームワークまたは製品 | 場所 | いまあるもの |
 |---|---|---|---|---|
@@ -40,7 +40,7 @@
 | 11 | [画面見取り図.md](./画面見取り図.md) | どこに何を置くかの図 |
 | 12 | [画面設計書.md](./画面設計書.md) | 部品の位置、表示、押したときの動き。画面IDは SCR-01 |
 | 13 | [操作手順書.md](./操作手順書.md) | 起動と、画面での操作手順 |
-| 14 | [AWSデプロイガイド.md](./AWSデプロイガイド.md) | EC2 の起動。2026年10月26日に1台起動した |
+| 14 | [AWSデプロイガイド.md](./AWSデプロイガイド.md) | EC2 へのデプロイ。2026年10月26日に載せた |
 
 ## 2. 目的から資料を選ぶ
 

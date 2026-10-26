@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>読書記録</title>
+  <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+  <main>
+    <h1>読書記録</h1>
+    <p class="lead">読んだ本と、これから読む本を残します。</p>
+
+    <section class="panel" id="login-panel">
+      <form id="login-form">
+        <div class="row">
+          <label>名前 <input id="name" name="name" autocomplete="username" maxlength="32"></label>
+          <label>パスワード <input id="password" name="password" type="password" autocomplete="current-password" maxlength="64"></label>
+          <button type="submit">ログイン</button>
+          <button type="button" id="register" class="quiet">登録</button>
+        </div>
+        <p class="message" id="login-message">ログインすると、自分の本を記録できます。</p>
+      </form>
+    </section>
+
+    <section id="books-panel" hidden>
+      <div class="row">
+        <span class="who" id="who"></span>
+        <button type="button" id="logout" class="quiet">ログアウト</button>
+      </div>
+
+      <form class="panel" id="add-form">
+        <div class="row">
+          <label>題名 <input class="title-input" id="title" maxlength="80" required></label>
+          <label>著者 <input class="author-input" id="author" maxlength="80" required></label>
+          <label>状態
+            <select id="status">
+              <option value="want">読みたい</option>
+              <option value="reading">読んでいる</option>
+              <option value="done">読み終わった</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <label>メモ <input class="memo-input" id="memo" maxlength="400"></label>
+          <button type="submit">追加</button>
+        </div>
+        <p class="message" id="book-message"></p>
+      </form>
+
+      <p class="empty" id="empty" hidden>まだ本がありません。</p>
+      <div id="book-list"></div>
+    </section>
+  </main>
+  <script>
+    var STORAGE = "reading-prototype";
+    var labels = { want: "読みたい", reading: "読んでいる", done: "読み終わった" };
+    var loginPanel = document.getElementById("login-panel");
+    var booksPanel = document.getElementById("books-panel");
+    var loginMessage = document.getElementById("login-message");
+    var bookMessage = document.getElementById("book-message");
+    var bookList = document.getElementById("book-list");
+    var empty = document.getElementById("empty");
+
+    function loadStore() {
+      var raw = localStorage.getItem(STORAGE);
+      if (!raw) {
+        return { users: [], session: null, nextId: 1 };
+      }
+      return JSON.parse(raw);
+    }
+
+    function saveStore(store) {
+      localStorage.setItem(STORAGE, JSON.stringify(store));
+    }
+
+    function validName(name) {
+      if (name.length < 1 || name.length > 32) {
+        return false;
+      }
+      return name.split("").every(function (ch) {
+        return ch.trim() !== "" && ch === ch.trim();
+      }) && !/\s/.test(name);
+    }
+
+    function validPassword(password) {
+      return password.length >= 8 && password.length <= 64;
+    }
+
+    function cleanBook(title, author, status, memo) {
+      title = title.trim();
+      author = author.trim();
+      memo = memo.trim();
+      if (!title || title.length > 80 || !author || author.length > 80) {
+        return null;
+      }
+      if (!labels[status] || memo.length > 400) {
+        return null;
+      }
+      return { title: title, author: author, status: status, memo: memo };
+    }
+
+    function findUser(store, name) {
+      return store.users.filter(function (user) {
+        return user.name === name;
+      })[0] || null;
+    }
+
+    function currentUser(store) {
+      if (!store.session) {
+        return null;
+      }
+      return findUser(store, store.session);
+    }
+
+    function showLogin(text) {
+      loginPanel.hidden = false;
+      booksPanel.hidden = true;
+      loginMessage.textContent = text || "ログインすると、自分の本を記録できます。";
+    }
+
+    function showBooks(name) {
+      loginPanel.hidden = true;
+      booksPanel.hidden = false;
+      document.getElementById("who").textContent = name;
+      document.getElementById("password").value = "";
+    }
+
+    function explainAuth(status) {
+      if (status === 409) {
+        loginMessage.textContent = "その名前は使われています。";
+        return;
+      }
+      if (status === 401) {
+        loginMessage.textContent = "名前またはパスワードが違います。";
+        return;
+      }
+      loginMessage.textContent = "名前は空白なしで1から32文字です。パスワードは8から64文字です。";
+    }
+
+    function drawBooks(books) {
+      bookList.textContent = "";
+      empty.hidden = books.length !== 0;
+      books.forEach(function (book) {
+        bookList.appendChild(bookCard(book));
+      });
+    }
+
+    function loadBooks() {
+      var store = loadStore();
+      var user = currentUser(store);
+      if (!user) {
+        showLogin();
+        return;
+      }
+      showBooks(user.name);
+      drawBooks(user.books.slice().sort(function (a, b) {
+        return b.id - a.id;
+      }));
+    }
+
+    function field(labelText, control) {
+      var label = document.createElement("label");
+      label.appendChild(document.createTextNode(labelText + " "));
+      label.appendChild(control);
+      return label;
+    }
+
+    function bookCard(book) {
+      var card = document.createElement("article");
+      card.className = "book";
+
+      var title = document.createElement("input");
+      title.className = "title-input";
+      title.maxLength = 80;
+      title.value = book.title;
+      var author = document.createElement("input");
+      author.className = "author-input";
+      author.maxLength = 80;
+      author.value = book.author;
+
+      var status = document.createElement("select");
+      Object.keys(labels).forEach(function (value) {
+        var option = document.createElement("option");
+        option.value = value;
+        option.textContent = labels[value];
+        status.appendChild(option);
+      });
+      status.value = book.status;
+
+      var memo = document.createElement("input");
+      memo.className = "memo-input";
+      memo.maxLength = 400;
+      memo.value = book.memo;
+
+      var save = document.createElement("button");
+      save.type = "button";
+      save.textContent = "保存";
+      save.addEventListener("click", function () {
+        saveBook(book.id, title.value, author.value, status.value, memo.value);
+      });
+
+      var remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "quiet";
+      remove.textContent = "削除";
+      remove.addEventListener("click", function () {
+        if (window.confirm("この本を削除しますか？")) {
+          deleteBook(book.id);
+        }
+      });
+
+      var row = document.createElement("div");
+      row.className = "row";
+      row.appendChild(field("題名", title));
+      row.appendChild(field("著者", author));
+      row.appendChild(field("状態", status));
+      row.appendChild(field("メモ", memo));
+      row.appendChild(save);
+      row.appendChild(remove);
+      card.appendChild(row);
+      return card;
+    }
+
+    function registerOrLogin(isRegister) {
+      var name = document.getElementById("name").value;
+      var password = document.getElementById("password").value;
+      if (!validName(name) || !validPassword(password)) {
+        explainAuth(400);
+        return;
+      }
+      var store = loadStore();
+      var user = findUser(store, name);
+      if (isRegister) {
+        if (user) {
+          explainAuth(409);
+          return;
+        }
+        user = { name: name, password: password, books: [] };
+        store.users.push(user);
+      } else if (!user || user.password !== password) {
+        explainAuth(401);
+        return;
+      }
+      store.session = name;
+      saveStore(store);
+      bookMessage.textContent = "";
+      loadBooks();
+    }
+
+    function saveBook(id, title, author, status, memo) {
+      var cleaned = cleanBook(title, author, status, memo);
+      var store = loadStore();
+      var user = currentUser(store);
+      if (!user) {
+        showLogin();
+        return;
+      }
+      if (!cleaned) {
+        bookMessage.textContent = "保存できませんでした。";
+        return;
+      }
+      var book = user.books.filter(function (item) {
+        return item.id === id;
+      })[0];
+      if (!book) {
+        bookMessage.textContent = "保存できませんでした。";
+        return;
+      }
+      book.title = cleaned.title;
+      book.author = cleaned.author;
+      book.status = cleaned.status;
+      book.memo = cleaned.memo;
+      saveStore(store);
+      bookMessage.textContent = "保存しました。";
+      loadBooks();
+    }
+
+    function deleteBook(id) {
+      var store = loadStore();
+      var user = currentUser(store);
+      if (!user) {
+        showLogin();
+        return;
+      }
+      var before = user.books.length;
+      user.books = user.books.filter(function (item) {
+        return item.id !== id;
+      });
+      if (user.books.length === before) {
+        bookMessage.textContent = "削除できませんでした。";
+        return;
+      }
+      saveStore(store);
+      bookMessage.textContent = "";
+      loadBooks();
+    }
+
+    document.getElementById("login-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      registerOrLogin(false);
+    });
+
+    document.getElementById("register").addEventListener("click", function () {
+      registerOrLogin(true);
+    });
+
+    document.getElementById("logout").addEventListener("click", function () {
+      var store = loadStore();
+      store.session = null;
+      saveStore(store);
+      bookList.textContent = "";
+      showLogin("ログインすると、自分の本を記録できます。");
+    });
+
+    document.getElementById("add-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      var cleaned = cleanBook(
+        document.getElementById("title").value,
+        document.getElementById("author").value,
+        document.getElementById("status").value,
+        document.getElementById("memo").value
+      );
+      var store = loadStore();
+      var user = currentUser(store);
+      if (!user) {
+        showLogin();
+        return;
+      }
+      if (!cleaned) {
+        bookMessage.textContent = "題名と著者を入れてください。";
+        return;
+      }
+      cleaned.id = store.nextId;
+      store.nextId += 1;
+      user.books.push(cleaned);
+      saveStore(store);
+      document.getElementById("add-form").reset();
+      bookMessage.textContent = "追加しました。";
+      loadBooks();
+    });
+
+    loadBooks();
+  </script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 # この版の Hono と SQLite は、この EC2 では動かない。SQLite は Durable Object のストレージである。
 # データベースの製品は SQLite である。RDS は作らない。
 # 外から入れるポートは、この PC からの 22（SSH）と 80 だけである。
-# terraform apply は、起動してよいと言われるまで実行しない。
+# 2026年10月26日に起動した。再適用は、指示があるまで実行しない。
 
 data "aws_vpc" "default" {
   default = true

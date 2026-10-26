@@ -1,3 +1,4 @@
 # コピーして infra/terraform.tfvars を作る。tfvars は Git に入れない。
 # 値は、この PC の公開アドレスを /32 で書く。
 allowed_cidr = "203.0.113.10/32"
+db_password  = "置き換える"

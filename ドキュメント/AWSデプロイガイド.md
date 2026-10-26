@@ -4,7 +4,7 @@
 |---|---|
 | 文書名 | AWSデプロイガイド |
 | 対象システム | 読書記録 |
-| 版 | 1.3 |
+| 版 | 1.4 |
 | 作成日 | 2026年10月26日 |
 | 作成者 | nsb |
 | 関連資料 | ドキュメント一覧、要件定義書、用語定義書、技術スタック、データベース設計、API仕様書、操作手順書 |
@@ -12,7 +12,7 @@
 
 言葉の意味は「用語定義書」に従います。採用する技術の正は「技術スタック」です。手元の `127.0.0.1:8787` で開く手順は「操作手順書」です。
 
-2026年10月26日に `terraform apply` を実行し、EC2 を1台起動しました。データベースの製品は SQLite のままです。RDS は作りません。SQLite の実行環境は Durable Object のストレージです。公開アドレスは Git に書きません。`infra` で `terraform output public_ip` を実行して見ます。
+2026年10月26日に `terraform apply` を実行し、EC2 を1台起動しました。本のデータベース製品は SQLite のままです。SQLite の実行環境は Durable Object のストレージです。確認用の RDS は PostgreSQL で、5432 は EC2 からだけ入れます。公開アドレスは Git に書きません。`infra` で `terraform output public_ip` を実行して見ます。
 
 ## 1. 何を置くか
 
@@ -83,7 +83,7 @@ terraform plan
 terraform apply
 ```
 
-できるものは EC2、そのセキュリティグループ、SSH の公開鍵、SSM 用の IAM です。RDS はできません。
+できるものは EC2、そのセキュリティグループ、SSH の公開鍵、SSM 用の IAM、それに EC2 からだけ入れる RDS です。
 
 終わったら、公開アドレスを見ます。
 
@@ -97,7 +97,7 @@ terraform output public_ip
 
 2026年10月26日に、`infra/ec2/setup.sh` を EC2 の中で実行し、アプリを載せました。スクリプトは Node.js 22、git、nginx を入れ、公開リポジトリを `/opt/reading-log` に取り、Wrangler を systemd で動かします。nginx は 80 番を `127.0.0.1:8787` へ渡します。
 
-作り直すときは、EC2 の中で root として `infra/ec2/setup.sh` を実行します。RDS は作りません。
+作り直すときは、EC2 の中で root として `infra/ec2/setup.sh` を実行します。RDS のパスワードは `infra/terraform.tfvars` にあり、Git には入れません。
 
 この PC のブラウザでは、`http://` のあとに公開アドレスを付けて開きます。公開アドレスは `terraform output public_ip` です。
 
@@ -107,4 +107,4 @@ terraform output public_ip
 
 ## 6. いまの状態
 
-2026年10月26日に、東京リージョンの既定 VPC へ EC2 を1台起動し、同じ日にアプリを載せました。型は t4g.small、名前は `reading-log` です。入ってくる接続は、この PC の 22 番と 80 番だけです。状態ファイルは `infra/terraform.tfstate` で、Git には入っていません。Hono は EC2 の中の Wrangler で動き、SQLite は Durable Object のストレージです。
+2026年10月26日に、東京リージョンの既定 VPC へ EC2 を1台起動し、同じ日にアプリを載せました。型は t4g.small、名前は `reading-log` です。入ってくる接続は、この PC の 22 番と 80 番だけです。状態ファイルは `infra/terraform.tfstate` で、Git には入っていません。Hono は EC2 の中の Wrangler で動き、本の SQLite は Durable Object のストレージです。確認用の RDS は `publicly_accessible = false` で、5432 は EC2 のセキュリティグループからだけです。ホスト名は `terraform output db_endpoint` です。

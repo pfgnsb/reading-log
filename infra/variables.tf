@@ -13,3 +13,21 @@ variable "allowed_cidr" {
     error_message = "この PC の公開アドレスを /32 で書いてください。"
   }
 }
+
+variable "db_name" {
+  description = "RDS に最初から作るデータベース名。"
+  type        = string
+  default     = "reading"
+}
+
+variable "db_username" {
+  description = "RDS の管理者ユーザー名。"
+  type        = string
+  default     = "reading"
+}
+
+variable "db_password" {
+  description = "RDS の管理者パスワード。値は terraform.tfvars に置く。"
+  type        = string
+  sensitive   = true
+}

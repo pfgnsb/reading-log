@@ -12,7 +12,7 @@
 
 この資料は、資料の入口です。何を作るか、何を作らないかの正は「要件定義書」です。言葉の意味の正は「用語定義書」です。
 
-利用者は、登録した人です。画面は `frontend/index.html` の1枚です。バックエンドの言語は JavaScript、フレームワークは Hono です。ファイルは `backend/worker.js` で、実行環境は Cloudflare Workers です。経路は `durable-object/reading.js` です。データベースの言語は SQL、製品は SQLite です。SQLite は Durable Object のストレージです。EC2 は 2026年10月26日に起動し、同じ日にアプリを載せています。入口は nginx の 80 番で、この PC だけが開けます。PostgreSQL と RDS は置きません。
+利用者は、登録した人です。画面は `frontend/index.html` の1枚です。バックエンドの言語は JavaScript、フレームワークは Hono です。ファイルは `backend/worker.js` で、実行環境は Cloudflare Workers です。経路は `durable-object/reading.js` です。データベースの言語は SQL、製品は SQLite です。SQLite は Durable Object のストレージです。EC2 は 2026年10月26日に起動し、同じ日にアプリを載せています。入口は nginx の 80 番で、この PC だけが開けます。確認用の RDS は EC2 からだけ接続します。本は RDS には移しません。
 
 | 層 | 言語 | フレームワークまたは製品 | 場所 | いまあるもの |
 |---|---|---|---|---|

@@ -92,15 +92,33 @@ export class Reading extends DurableObject {
     if (existing.length) return c.json({ error: "taken" }, 409);
     var salt = randomHex(16);
     var hash = await hashPassword(parsed.password, salt);
-    this.sql(
-      "INSERT INTO users (name, salt, password_hash) VALUES (?, ?, ?)",
-      parsed.name,
-      salt,
-      hash
-    );
-    var user = this.sql("SELECT id, name FROM users WHERE name = ?", parsed.name).one();
-    await this.startSession(c, user.id);
-    return c.json({ name: user.name }, 201);
+    var token = randomHex(32);
+    var expires = Math.floor(Date.now() / 1000) + Math.floor(SESSION_MS / 1000);
+    var self = this;
+    var name;
+    this.ctx.storage.transactionSync(function () {
+      self.sql(
+        "INSERT INTO users (name, salt, password_hash) VALUES (?, ?, ?)",
+        parsed.name,
+        salt,
+        hash
+      );
+      var user = self.sql("SELECT id, name FROM users WHERE name = ?", parsed.name).one();
+      self.sql(
+        "INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)",
+        token,
+        user.id,
+        expires
+      );
+      name = user.name;
+    });
+    setCookie(c, "session", token, {
+      httpOnly: true,
+      sameSite: "Lax",
+      path: "/",
+      maxAge: Math.floor(SESSION_MS / 1000)
+    });
+    return c.json({ name: name }, 201);
   }
 
   async login(c) {

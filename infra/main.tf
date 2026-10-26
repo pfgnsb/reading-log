@@ -1,5 +1,5 @@
 # この段階で作るのは EC2 1 台である。
-# この版の Hono と SQLite は、この EC2 では動かない。SQLite は Durable Object のストレージである。
+# アプリは infra/ec2/setup.sh で載せる。中では Wrangler が Hono と Durable Object の SQLite を動かす。
 # データベースの製品は SQLite である。RDS は作らない。
 # 外から入れるポートは、この PC からの 22（SSH）と 80 だけである。
 # 2026年10月26日に起動した。再適用は、指示があるまで実行しない。

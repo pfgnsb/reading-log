@@ -7,25 +7,24 @@
 | 層 | 言語 | フレームワークまたは製品 | 実行環境 |
 |---|---|---|---|
 | フロントエンド | HTML、CSS、JavaScript | なし | ブラウザ |
-| バックエンド | Python | FastAPI | Uvicorn。`127.0.0.1:8000` |
-| データベース | SQL | SQLite | ファイル `reading.db` |
+| バックエンド | JavaScript | Hono | Cloudflare Workers。`127.0.0.1:8787` |
+| データベース | SQL | SQLite | Durable Object のストレージ |
 
-EC2 は、このアプリをあとから動かす場所です。言語でもフレームワークでもデータベースでもありません。定義は置いてあり、インスタンスは起動していません。
+Cloudflare Workers と Durable Objects は実行環境です。言語でもフレームワークでもデータベース製品でもありません。EC2 の定義は置いてあり、インスタンスは起動していません。この版の Hono と SQLite は、その EC2 では動きません。
 
 ## 開き方
 
-Python 3.12 を使います。
+Node.js を使います。
 
 ```powershell
 cd $HOME\OneDrive\Desktop\読書
-python -m venv .venv
-.\.venv\Scripts\python -m pip install -r requirements.txt
-.\.venv\Scripts\python -m uvicorn app:app --host 127.0.0.1 --port 8000
+npm install
+npx wrangler dev
 ```
 
-ブラウザで http://127.0.0.1:8000 を開きます。止めるときは `Ctrl+C` です。
+ブラウザで http://127.0.0.1:8787 を開きます。止めるときは `Ctrl+C` です。
 
-サーバを起動せずに画面だけ見るときは、`prototype/index.html` をブラウザで直接開きます。記録はブラウザの中に残り、SQLite には書きません。
+サーバを起動せずに画面だけ見るときは、`prototype/index.html` をブラウザで直接開きます。記録はブラウザの中に残り、Durable Object の SQLite には書きません。
 
 ## 資料
 

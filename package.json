@@ -1,0 +1,14 @@
+{
+  "name": "reading-log",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.45.0"
+  },
+  "dependencies": {
+    "hono": "^4.13.13"
+  }
+}

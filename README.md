@@ -6,7 +6,7 @@
 
 | 層 | 言語 | フレームワークまたは製品 | 実行環境 |
 |---|---|---|---|
-| フロントエンド | HTML、CSS、JavaScript | なし | ブラウザ |
+| フロントエンド | JavaScript | Vue 3、Nuxt | ブラウザ |
 | バックエンド | JavaScript | Hono | Cloudflare Workers。`127.0.0.1:8787` |
 | データベース | SQL | SQLite | Durable Object のストレージ |
 
@@ -19,10 +19,10 @@ Node.js を使います。
 ```powershell
 cd $HOME\OneDrive\Desktop\読書
 npm install
-npx wrangler dev
+npm run dev
 ```
 
-ブラウザで http://127.0.0.1:8787 を開きます。止めるときは `Ctrl+C` です。
+`npm install` は画面の Vue と Nuxt も入れます。`npm run dev` は Nuxt で静的ファイルを生成してから Wrangler を起動します。ブラウザで http://127.0.0.1:8787 を開きます。止めるときは `Ctrl+C` です。
 
 サーバを起動せずに画面だけ見るときは、`prototype/index.html` をブラウザで直接開きます。記録はブラウザの中に残り、Durable Object の SQLite には書きません。
 

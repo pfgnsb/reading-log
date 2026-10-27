@@ -4,7 +4,7 @@
 |---|---|
 | 文書名 | API仕様書 |
 | 対象システム | 読書記録 |
-| 版 | 1.3 |
+| 版 | 1.4 |
 | 作成日 | 2026年10月23日 |
 | 作成者 | nsb |
 | 関連資料 | ドキュメント一覧、要件定義書、用語定義書、機能要件定義書、技術スタック、データベース設計 |
@@ -12,7 +12,7 @@
 
 バックエンドの言語は JavaScript、フレームワークは Hono です。実行環境は Cloudflare Workers です。データベースは SQLite で、Durable Object のストレージです。ベース URL は `http://127.0.0.1:8787` です。
 
-画面の HTML は `GET /` です。Workers の静的配信が `frontend/index.html` を返します。この資料の API は、パスが `/api/` で始まるものだけです。`/api/health` 以外は `durable-object/reading.js` が受けます。本体は JSON、文字コードは UTF-8 です。ログイン後の呼び出しは Cookie `session` を送ります。Cookie は HttpOnly、SameSite=Lax、Path=/、有効期限は7日です。
+画面の HTML は `GET /` です。Workers の静的配信が、Nuxt の生成物 `frontend/.output/public` を返します。画面のソースは Vue の `frontend/app/app.vue` です。この資料の API は、パスが `/api/` で始まるものだけです。`/api/health` 以外は `durable-object/reading.js` が受けます。本体は JSON、文字コードは UTF-8 です。ログイン後の呼び出しは Cookie `session` を送ります。Cookie は HttpOnly、SameSite=Lax、Path=/、有効期限は7日です。
 
 JSON でないとき、項目が足りないとき、値が約束に合わないときは、400 で、本体は `{ "error": "invalid" }` です。定義済みのパスでメソッドが違うときは、405 で、本体は `{ "error": "method" }` です。
 

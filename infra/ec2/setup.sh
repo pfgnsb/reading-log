@@ -42,6 +42,7 @@ else
 fi
 
 sudo -u ec2-user npm --prefix /opt/reading-log install
+sudo -u ec2-user npm --prefix /opt/reading-log run build
 
 cat > /etc/systemd/system/reading-log.service <<'EOF'
 [Unit]

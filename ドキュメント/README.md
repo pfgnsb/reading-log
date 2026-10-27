@@ -4,19 +4,19 @@
 |---|---|
 | 文書名 | ドキュメント一覧 |
 | 対象システム | 読書記録 |
-| 版 | 1.0 |
+| 版 | 1.1 |
 | 作成日 | 2026年10月26日 |
 | 作成者 | nsb |
-| 関連資料 | 用語定義書、要件定義書、機能要件定義書、機能要件、非機能要件、ユースケース、ER図、データベース設計、技術スタック、API仕様書、画面見取り図、画面設計書、操作手順書、AWSデプロイガイド、`frontend/index.html` |
+| 関連資料 | 用語定義書、要件定義書、機能要件定義書、機能要件、非機能要件、ユースケース、ER図、データベース設計、技術スタック、API仕様書、画面見取り図、画面設計書、操作手順書、AWSデプロイガイド、`frontend/app/app.vue` |
 | 目的 | 資料を、どの順で読むかと、役割で引けるようにする |
 
 この資料は、資料の入口です。何を作るか、何を作らないかの正は「要件定義書」です。言葉の意味の正は「用語定義書」です。
 
-利用者は、登録した人です。画面は `frontend/index.html` の1枚です。バックエンドの言語は JavaScript、フレームワークは Hono です。ファイルは `backend/worker.js` で、実行環境は Cloudflare Workers です。経路は `durable-object/reading.js` です。データベースの言語は SQL、製品は SQLite です。SQLite は Durable Object のストレージです。EC2 は 2026年10月26日に起動し、同じ日にアプリを載せています。入口は nginx の 80 番で、この PC だけが開けます。確認用の RDS は EC2 からだけ接続します。本は RDS には移しません。
+利用者は、登録した人です。画面は Vue と Nuxt で、ソースは `frontend/app/app.vue` の1枚です。バックエンドの言語は JavaScript、フレームワークは Hono です。ファイルは `backend/worker.js` で、実行環境は Cloudflare Workers です。経路は `durable-object/reading.js` です。データベースの言語は SQL、製品は SQLite です。SQLite は Durable Object のストレージです。EC2 は 2026年10月26日に起動し、同じ日にアプリを載せています。入口は nginx の 80 番で、この PC だけが開けます。確認用の RDS は EC2 からだけ接続します。本は RDS には移しません。
 
 | 層 | 言語 | フレームワークまたは製品 | 場所 | いまあるもの |
 |---|---|---|---|---|
-| フロントエンド | HTML、CSS、JavaScript | なし | `frontend/index.html` | ログイン欄、本の追加、自分の本の一覧。CSS は `<style>`、JavaScript は `<script>` |
+| フロントエンド | JavaScript | Vue 3、Nuxt | `frontend/app/app.vue` | できることの解説、ログイン欄、本の追加、自分の本の一覧。部品は `frontend/app/components`。見た目は `frontend/app/assets/main.css` |
 | バックエンド | JavaScript | Hono | `backend/worker.js` | `/api/` を Durable Object へ渡す。実行環境は Cloudflare Workers。`127.0.0.1:8787` |
 | データベース | SQL | SQLite | `durable-object/reading.js` | `users`、`sessions`、アカウントごとの `books`。実行環境は Durable Object のストレージ |
 | 資料 | | | `ドキュメント` | 言葉、範囲、機能、画面、データ、技術、API、手順 |
@@ -58,7 +58,7 @@
 
 ### 技術
 
-使うものと使わないものは技術スタックです。フロントエンドの言語は HTML、CSS、JavaScript で、フレームワークはありません。バックエンドの言語は JavaScript、フレームワークは Hono、実行環境は Cloudflare Workers です。データベースは SQLite で、Durable Object のストレージです。パスは API仕様書です。手元では `http://127.0.0.1:8787` を開きます。EC2 は 2026年10月26日に起動しています。手順は AWSデプロイガイドです。
+使うものと使わないものは技術スタックです。フロントエンドの言語は JavaScript、フレームワークは Vue と Nuxt です。バックエンドの言語は JavaScript、フレームワークは Hono、実行環境は Cloudflare Workers です。データベースは SQLite で、Durable Object のストレージです。パスは API仕様書です。手元では `http://127.0.0.1:8787` を開きます。EC2 は 2026年10月26日に起動しています。手順は AWSデプロイガイドです。
 
 ### 画面
 
@@ -91,3 +91,4 @@ flowchart TD
 | 版 | 日付 | 内容 |
 |---|---|---|
 | 1.0 | 2026年10月26日 | 初版。用語定義書から AWSデプロイガイドまで、読む順と役割を書いた |
+| 1.1 | 2026年10月27日 | 画面を Vue と Nuxt にした |

@@ -2,8 +2,12 @@
   "name": "reading-log",
   "private": true,
   "scripts": {
-    "dev": "wrangler dev",
-    "start": "wrangler dev"
+    "postinstall": "npm install --prefix frontend",
+    "build": "npm run generate --prefix frontend",
+    "dev": "npm run build && wrangler dev",
+    "dev:api": "wrangler dev",
+    "dev:web": "npm run dev --prefix frontend",
+    "start": "npm run build && wrangler dev"
   },
   "devDependencies": {
     "wrangler": "^4.45.0"

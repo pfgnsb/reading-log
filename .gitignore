@@ -2,6 +2,10 @@
 __pycache__/
 reading.db
 node_modules/
+frontend/.nuxt/
+frontend/.output/
+frontend/.data/
+frontend/dist/
 .wrangler/
 
 .terraform/

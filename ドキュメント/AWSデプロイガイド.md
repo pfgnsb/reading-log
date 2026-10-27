@@ -4,7 +4,7 @@
 |---|---|
 | 文書名 | AWSデプロイガイド |
 | 対象システム | 読書記録 |
-| 版 | 1.4 |
+| 版 | 1.5 |
 | 作成日 | 2026年10月26日 |
 | 作成者 | nsb |
 | 関連資料 | ドキュメント一覧、要件定義書、用語定義書、技術スタック、データベース設計、API仕様書、操作手順書 |
@@ -16,11 +16,11 @@
 
 ## 1. 何を置くか
 
-言語、フレームワーク、データベース、実行環境は分けます。バックエンドの言語は JavaScript、フレームワークは Hono です。データベースの製品は SQLite です。EC2 の中では、Wrangler が Workers と Durable Object を動かします。nginx は 80 番の入口です。
+言語、フレームワーク、データベース、実行環境は分けます。画面の言語は JavaScript、フレームワークは Vue と Nuxt です。バックエンドの言語は JavaScript、フレームワークは Hono です。データベースの製品は SQLite です。EC2 の中では、`npm run build` のあと Wrangler が Workers と Durable Object を動かします。nginx は 80 番の入口です。
 
 | 層 | 言語 | フレームワークまたは製品 | 実行環境 |
 |---|---|---|---|
-| フロントエンド | HTML、CSS、JavaScript | なし | ブラウザ。`frontend/index.html` |
+| フロントエンド | JavaScript | Vue 3、Nuxt | ブラウザ。ソースは `frontend/app/app.vue`。配信は `frontend/.output/public` |
 | バックエンド | JavaScript | Hono | EC2 の中の Wrangler。`127.0.0.1:8787` |
 | 入口 | | nginx | EC2 の 80 番。この PC だけ |
 | データベース | SQL | SQLite | Durable Object のストレージ。`durable-object/reading.js` |
@@ -30,7 +30,7 @@
 この PC のブラウザ
   └─ http://EC2の公開アドレス/     nginx（80）
         └─ Wrangler（127.0.0.1:8787）
-              ├─ frontend/index.html
+              ├─ frontend/.output/public（Vue と Nuxt の生成物）
               └─ durable-object/reading.js の SQLite
 ```
 
@@ -95,7 +95,7 @@ terraform output public_ip
 
 ## 5. アプリを載せる
 
-2026年10月26日に、`infra/ec2/setup.sh` を EC2 の中で実行し、アプリを載せました。スクリプトは Node.js 22、git、nginx を入れ、公開リポジトリを `/opt/reading-log` に取り、Wrangler を systemd で動かします。nginx は 80 番を `127.0.0.1:8787` へ渡します。
+2026年10月26日に、`infra/ec2/setup.sh` を EC2 の中で実行し、アプリを載せました。スクリプトは Node.js 22、git、nginx を入れ、公開リポジトリを `/opt/reading-log` に取り、`npm install` と `npm run build` のあと Wrangler を systemd で動かします。`npm run build` は Vue と Nuxt の静的ファイルを作ります。nginx は 80 番を `127.0.0.1:8787` へ渡します。
 
 作り直すときは、EC2 の中で root として `infra/ec2/setup.sh` を実行します。RDS のパスワードは `infra/terraform.tfvars` にあり、Git には入れません。
 
@@ -103,7 +103,7 @@ terraform output public_ip
 
 起動確認は `GET /api/health` です。期待する本文は `{"status":"ok"}` です。ログインしていないときの `GET /api/books` は 401 です。パスは「API仕様書」です。
 
-手元だけで見るときは、これまでどおり `npx wrangler dev` と `http://127.0.0.1:8787` です。手順は「操作手順書」です。
+手元だけで見るときは、`npm run dev` と `http://127.0.0.1:8787` です。手順は「操作手順書」です。
 
 ## 6. いまの状態
 
